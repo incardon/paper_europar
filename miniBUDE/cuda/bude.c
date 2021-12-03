@@ -29,7 +29,7 @@
 
 void loadParameters(int argc, char *argv[]);
 void freeParameters();
-void printTimings(double start, double end, double poses_per_wi);
+void printTimings(double start, double end, double poses_per_wi, double * gflops, int i);
 void checkError(int err, const char *op);
 void runCUDA(float* results);
 

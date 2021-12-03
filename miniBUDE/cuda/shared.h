@@ -55,6 +55,6 @@ double getTimestamp();
 #ifdef __cplusplus
 extern "C"
 #endif
-void printTimings(double start, double end, double poses_per_wi);
+void printTimings(double start, double end, double poses_per_wi, double * gflops, int i);
 
 #endif
