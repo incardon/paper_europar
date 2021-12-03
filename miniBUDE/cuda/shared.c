@@ -13,7 +13,7 @@ double getTimestamp()
     return tv.tv_usec + tv.tv_sec*1e6;
 }
 
-void printTimings(double start, double end, double poses_per_wi)
+void printTimings(double start, double end, double poses_per_wi, double * gflops_f, int i)
 {
     double ms = ((end-start)/params.iterations)*1e-3;
 
@@ -37,5 +37,7 @@ void printTimings(double start, double end, double poses_per_wi)
     printf("- Average time:   %7.2lf ms\n", ms);
     printf("- Interactions/s: %7.2lf billion\n", (interactions_per_sec / 1e9));
     printf("- GFLOP/s:        %7.2lf\n", gflops);
+
+    gflops_f[i] = gflops;
 }
 

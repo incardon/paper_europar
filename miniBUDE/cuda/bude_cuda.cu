@@ -103,7 +103,7 @@ void runCUDA(float* results)
   size_t local  = _cuda.wgsize;
   size_t shared = params.ntypes * sizeof(FFParams);
 
-  double times[30];
+  double gflops[30];
   for (int i = 0 ; i < 30 ; i++)
   {
 
@@ -134,16 +134,15 @@ void runCUDA(float* results)
   cudaDeviceSynchronize();
 
   double end = getTimestamp();
-  times[i] = end - start;
 
   cudaMemcpy(results, _cuda.d_results, params.nposes*sizeof(float), cudaMemcpyDeviceToHost);
   cudaDeviceSynchronize();
 
-  printTimings(start, end, _cuda.posesPerWI);
+  printTimings(start, end, _cuda.posesPerWI,gflops,i);
   }
 
-  double mean = gsl_stats_mean(times,1,30);
-  double dev = gsl_stats_sd(times,1,30);
+  double mean = gsl_stats_mean(gflops,1,30);
+  double dev = gsl_stats_sd(gflops,1,30);
 
   printf("Mean: %f ~ %f \n",mean,dev);
 
