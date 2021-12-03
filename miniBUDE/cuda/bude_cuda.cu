@@ -145,6 +145,8 @@ void runCUDA(float* results)
   double mean = gsl_stats_mean(times,1,30);
   double dev = gsl_stats_sd(times,1,30);
 
+  printf("Mean: %f ~ %f \n",mean,dev);
+
   FILE* perf_out = openFile("./","performance_out", "w", NULL);
   char out[256];
   sprintf(out,"%f %f",mean,dev);
