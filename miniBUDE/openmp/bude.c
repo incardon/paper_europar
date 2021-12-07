@@ -176,6 +176,10 @@ void runOpenMP(float *restrict results)
 
   double end = getTimestamp();
 
+  printTimings(start, end, gflops, i);
+
+  }
+
   memcpy(results, buffer, sizeof(float) * params.nposes);
 
   free(protein);
@@ -183,9 +187,6 @@ void runOpenMP(float *restrict results)
   free(forcefield);
   free(buffer);
   for(int p = 0; p < 6; p++) free(poses[p]);
-
-  printTimings(start, end, gflops, i);
-  }
 
   double mean = gsl_stats_mean(gflops,1,30);
   double dev = gsl_stats_sd(gflops,1,30);
