@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <gsl/gsl_statistics_double.h>
 
 #include "bude.h"
 
@@ -25,7 +26,7 @@ struct
 double   getTimestamp();
 void     loadParameters(int argc, char *argv[]);
 void     freeParameters();
-void     printTimings(double start, double end);
+void     printTimings(double start, double end, double * gflops, int i);
 
 void     runOpenMP(float *energies);
 
@@ -142,6 +143,11 @@ void runOpenMP(float *restrict results)
     forcefield[i] = params.forcefield[i];
   }
 
+  double gflops[30];
+
+  // Run 30 times
+  for (int i = 0 ; i < 30 ; i++)
+  {
 
   // warm up 1 iter
 #pragma omp parallel for
@@ -178,7 +184,19 @@ void runOpenMP(float *restrict results)
   free(buffer);
   for(int p = 0; p < 6; p++) free(poses[p]);
 
-  printTimings(start, end);
+  printTimings(start, end, gflops, i);
+  }
+
+  double mean = gsl_stats_mean(gflops,1,30);
+  double dev = gsl_stats_sd(gflops,1,30);
+
+  printf("Mean: %f ~ %f \n",mean,dev);
+
+  FILE* perf_out = openFile("./","performance_out", "w", NULL);
+  char out[256];
+  sprintf(out,"%f %f",mean,dev);
+  fwrite(out,1,strlen(out),perf_out);
+  fclose(perf_out);
 }
 
 int parseInt(const char *str)
@@ -295,7 +313,7 @@ void freeParameters()
     free(params.poses[i]);
 }
 
-void printTimings(double start, double end)
+void printTimings(double start, double end, double * gflops_t, int i)
 {
   // Average time per iteration
   double ms      = ((end-start)/params.iterations)*1e-3;
@@ -322,6 +340,8 @@ void printTimings(double start, double end)
     * (double)params.natlig
     * (double)params.natpro;
   double interactions_per_sec = interactions / runtime;
+
+  gflops_t[i] = gflops;
 
   // Print stats
   printf("- Total time:     %7.3lf ms\n", (end-start)*1e-3);
