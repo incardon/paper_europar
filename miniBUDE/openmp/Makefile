@@ -40,6 +40,7 @@ endif
 
 CC_ARM     = armclang
 CC_CLANG   = clang
+CC_CLANG_2 = clang
 CC_CRAY    = cc
 CC_FUJITSU = fcc
 CC_GNU     = gcc
