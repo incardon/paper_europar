@@ -40,6 +40,7 @@ endif
 
 CC_ARM     = armclang
 CC_CLANG   = clang
+CC_CLANG_2 = clang
 CC_CRAY    = cc
 CC_FUJITSU = fcc
 CC_GNU     = gcc
@@ -48,6 +49,7 @@ CC = $(CC_$(COMPILER))
 
 CFLAGS_ARM     = -std=c99 -Wall -Ofast -ffast-math -fopenmp -fsimdmath -$(ARCHFLAG)=$(ARCH)
 CFLAGS_CLANG   = -std=c99 -Wall -Ofast -ffast-math -Xclang -fopenmp -I/opt/homebrew/include  -$(ARCHFLAG)=$(ARCH) $(if $(AVX512),-mprefer-vector-width=512) /opt/homebrew/lib/libomp.dylib -L/opt/homebrew/lib/ -lgslcblas  -lgsl
+CFLAGS_CLANG_2   = -std=c99 -Wall -Ofast -ffast-math -Xclang -fopenmp  -$(ARCHFLAG)=$(ARCH) $(if $(AVX512),-mprefer-vector-width=512) -fopenmp=libomp   -L/opt/homebrew/lib/ -lgslcblas  -lgsl
 CFLAGS_CRAY    = -O3 -homp -hfp4 -haggress -hflex_mp=tolerant -hvector3 -hscalar3 -Gfast
 CFLAGS_FUJITSU = -Nclang -std=c99 -Wall -Ofast -ffast-math -fopenmp -$(ARCHFLAG)=$(ARCH) -mllvm -force-vector-interleave=4
 CFLAGS_GNU     = -std=c99 -Wall -Ofast -ffast-math -fopenmp -$(ARCHFLAG)=$(ARCH) $(if $(AVX512),-mprefer-vector-width=512) -lgsl -lgslcblas

@@ -31,6 +31,7 @@ NV_FLAGS  = -O3 --ptxas-options="-v" -use_fast_math \
 		-gencode arch=compute_35,code=sm_35 -restrict \
 		-gencode arch=compute_60,code=sm_60 -restrict \
 		-gencode arch=compute_70,code=sm_70 -restrict \
+		-gencode arch=compute_80,code=sm_80 -restrict \
 		-gencode arch=compute_86,code=sm_86 -restrict
 
 HIP_FLAGS = -O3
