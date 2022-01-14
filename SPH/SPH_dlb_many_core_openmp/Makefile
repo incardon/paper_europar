@@ -1,4 +1,4 @@
-include ../../../example.mk
+include ../../example.mk
 
 ### This is a trick to avoid "Command not found if you no not have NVCC compiler". In practice the normal C++ compiler is used
 ### internally the example disable with the preprocessor its code if not compiled with nvcc 
