@@ -979,6 +979,8 @@ int main(int argc, char* argv[])
 	v_cl.sum(dev_tf);
 	v_cl.sum(dev_comm);
 
+	v_cl.execute();
+
 	mean_ts /= v_cl.size();
 	mean_tf /= v_cl.size();
 	mean_comm /= v_cl.size();
@@ -987,9 +989,12 @@ int main(int argc, char* argv[])
 	dev_tf /= v_cl.size();
 	dev_comm /= v_cl.size();
 
-	std::cout << mean_ts << " " << dev_ts << std::endl;
-	std::cout << mean_tf << " " << dev_tf << std::endl;
-	std::cout << mean_comm << " " << dev_comm << std::endl;
+	if (v_cl.rank() == 0)
+	{
+		std::cout << "STEP: " << mean_ts << " " << dev_ts << std::endl;
+		std::cout << "FORCE: " << mean_tf << " " << dev_tf << std::endl;
+		std::cout << "COMM: " << mean_comm << " " << dev_comm << std::endl;
+	}
 
 	openfpm_finalize();
 }
