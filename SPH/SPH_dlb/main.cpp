@@ -64,6 +64,7 @@
 #include "Vector/vector_dist.hpp"
 #include <math.h>
 #include "Draw/DrawParticles.hpp"
+#include "util/stat/common_statistics.hpp"
 //! \cond [inclusion] \endcond
 
 /*!
@@ -148,7 +149,7 @@ const double MassBound = 0.000614125;
 
 // End simulation time
 #ifdef TEST_RUN
-const double t_end = 0.001;
+const double t_end = 0.004;
 #else
 const double t_end = 1.5;
 #endif
@@ -454,12 +455,16 @@ inline double Pi(const Point<3,double> & dr, double rr2, Point<3,double> & dv, d
 
 /*! \cond [calc_forces] \endcond */
 
-template<typename CellList> inline void calc_forces(particles & vd, CellList & NN, double & max_visc)
+template<typename CellList> inline void calc_forces(particles & vd, CellList & NN, double & max_visc, timer & tf, timer & tc)
 {
 	auto part = vd.getDomainIterator();
 
 	// Update the cell-list
+	tc.start();
 	vd.updateCellList(NN);
+	tc.stop();
+
+	tf.start();
 
 	// For each particle ...
 	while (part.isNext())
@@ -597,9 +602,12 @@ template<typename CellList> inline void calc_forces(particles & vd, CellList & N
 
 		++part;
 	}
+
+	tf.stop();
 }
 
-/*! \cond [calc_forces] \endcond */
+/*! \cond [
+ * tc.stop();calc_forces] \endcond */
 
 /*!
  *
@@ -1367,6 +1375,10 @@ int main(int argc, char* argv[])
 
 	auto NN = vd.getCellList(2*H);
 
+	openfpm::vector<double> time_forces;
+        openfpm::vector<double> time_cell;
+        openfpm::vector<double> time_steps;
+
 	// Evolve
 
 	/*!
@@ -1418,8 +1430,11 @@ int main(int argc, char* argv[])
 
 		vd.ghost_get<type,rho,Pressure,velocity>();
 
+		timer tf;
+		timer tc;
+
 		// Calc forces
-		calc_forces(vd,NN,max_visc);
+		calc_forces(vd,NN,max_visc,tf,tc);
 
 		// Get the maximum viscosity term across processors
 		v_cl.max(max_visc);
@@ -1461,36 +1476,47 @@ int main(int argc, char* argv[])
 			if (v_cl.getProcessUnitID() == 0)
 			{std::cout << "TIME: " << t << "  " << it_time.getwct() << "   " << v_cl.getProcessUnitID() << "   " << cnt << "    Max visc: " << max_visc << std::endl;}
 		}
+                time_steps.add(it_time.getwct());
+                time_forces.add(tf.getwct());
+		time_cell.add(tc.getwct());
 	}
 
-	//! \cond [main loop] \endcond
+	auto & v_cl = create_vcluster();
 
-	/*!
-	 *
-	 * \page Vector_7_sph_dlb Vector 7 SPH Dam break  simulation with Dynamic load balancing
-	 *
-	 * ## Finalize ## {#finalize_e0_sim}
-	 *
-	 *
-	 *  At the very end of the program we have always de-initialize the library
-	 *
-	 * \snippet Vector/7_SPH_dlb/main.cpp finalize
-	 *
-	 */
+	        double mean_ts, dev_ts;
+        double mean_tf, dev_tf;
+        double mean_comm, dev_comm;
 
-	//! \cond [finalize] \endcond
+        standard_deviation(time_steps,mean_ts,dev_ts);
+        standard_deviation(time_forces,mean_tf,dev_tf);
+        standard_deviation(time_cell,mean_comm,dev_comm);
+
+        v_cl.sum(mean_ts);
+        v_cl.sum(mean_tf);
+        v_cl.sum(mean_comm);
+
+        v_cl.sum(dev_ts);
+        v_cl.sum(dev_tf);
+        v_cl.sum(dev_comm);
+
+        v_cl.execute();
+
+        mean_ts /= v_cl.size();
+        mean_tf /= v_cl.size();
+        mean_comm /= v_cl.size();
+
+        dev_ts /= v_cl.size();
+        dev_tf /= v_cl.size();
+        dev_comm /= v_cl.size();
+
+        if (v_cl.rank() == 0)
+        {
+                std::cout << "STEP: " << mean_ts << " " << dev_ts << std::endl;
+                std::cout << "FORCE: " << mean_tf << " " << dev_tf << std::endl;
+                std::cout << "CELL: " << mean_comm << " " << dev_comm << std::endl;
+        }
 
 	openfpm_finalize();
 
-	//! \cond [finalize] \endcond
-
-	/*!
-	 * \page Vector_7_sph_dlb Vector 7 SPH Dam break  simulation with Dynamic load balancing
-	 *
-	 * ## Full code ## {#code_e7_sph_dlb}
-	 *
-	 * \include Vector/7_SPH_dlb/main.cpp
-	 *
-	 */
 }
  
