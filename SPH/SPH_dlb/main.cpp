@@ -1029,7 +1029,7 @@ int main(int argc, char* argv[])
 
 	// Here we define our domain a 2D box with internals from 0 to 1.0 for x and y
 	Box<3,double> domain({-0.05,-0.05,-0.05},{1.7010,0.7065,0.5025});
-	size_t sz[3] = {207,90,66};
+	size_t sz[3] = {413,179,133};
 
 	// Fill W_dap
 	W_dap = 1.0/Wab(H/1.5);
