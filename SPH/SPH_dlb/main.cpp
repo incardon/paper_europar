@@ -118,7 +118,7 @@
 #define FLUID 1
 
 // initial spacing between particles dp in the formulas
-const double dp = 0.0085;
+const double dp = 0.00425;
 // Maximum height of the fluid water
 // is going to be calculated and filled later on
 double h_swl = 0.0;
@@ -130,7 +130,7 @@ const double coeff_sound = 20.0;
 const double gamma_ = 7.0;
 
 // sqrt(3.0*dp*dp) support of the kernel
-const double H = 0.0147224318643;
+const double H = 0.00736121593217;
 
 // Eta in the formulas
 const double Eta2 = 0.01 * H*H;
@@ -142,10 +142,10 @@ const double visco = 0.1;
 double cbar = 0.0;
 
 // Mass of the fluid particles
-const double MassFluid = 0.000614125;
+const double MassFluid = 0.0000767656;
 
 // Mass of the boundary particles
-const double MassBound = 0.000614125;
+const double MassBound = 0.0000767656;
 
 // End simulation time
 #ifdef TEST_RUN
