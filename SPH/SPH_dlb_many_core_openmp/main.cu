@@ -932,13 +932,7 @@ int main(int argc, char* argv[])
 
 		real_number max_visc = 0.0;
 
-		timer tc;
-		tc.start();
-
 		vd.ghost_get<type,rho,Pressure,velocity>(RUN_ON_DEVICE);
-		
-		tc.stop();
-		time_comm.add(tc.getwct());
 
 		// Calc forces
 
@@ -947,7 +941,7 @@ int main(int argc, char* argv[])
 
 		calc_forces(vd,NN,max_visc,cnt,tf,tcl);
 
-
+		time_comm.add(tcl.getwct());
 		// Get the maximum viscosity term across processors
 		v_cl.max(max_visc);
 		v_cl.execute();
