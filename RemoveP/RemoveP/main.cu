@@ -384,6 +384,9 @@ int main(int argc, char* argv[])
 
 	// remove the particles marked
 
+	timer tm;
+
+	tm.start();
 	openfpm::vector<size_t> rm;
 	rm.reserve(vd.size_local() / 2);
 
@@ -394,7 +397,16 @@ int main(int argc, char* argv[])
 
         vd.remove(rm);
 
+	tm.stop();
+	std::cout << "REMOVE: " << tm.getwct() << std::endl;
+
 	}
+
+	double rem_mean;
+	double rem_dev;
+	standard_deviation(tr,rem_mean,rem_dev);
+
+	std::cout << "REM: " << rem_mean << std::endl; 
 
 	openfpm_finalize();
 }

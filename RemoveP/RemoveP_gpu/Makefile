@@ -55,7 +55,7 @@ sph_dlb_test: sph_dlb
 	$(CUDA_CC) -O3 $(OPT) $(CUDA_OPTIONS)  -g -c --std=c++14 -o $@ $< $(INCLUDE_PATH_NVCC)
 
 %.o: %.cpp
-	$(CC) -O3 $(OPT) -g -c --std=c++14 -o $@ $< $(INCLUDE_PATH)
+	$(CC) -O0 $(OPT) -g -c --std=c++14 -o $@ $< $(INCLUDE_PATH)
 
 sph_dlb: $(OBJ)
 	$(CUDA_CC_LINK) -o  $@ $^ $(CFLAGS) $(LIBS_PATH) $(LIBS_SELECT)

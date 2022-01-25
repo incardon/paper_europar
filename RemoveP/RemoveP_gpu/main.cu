@@ -223,6 +223,11 @@ int main(int argc, char* argv[])
     // initialize the library
 	openfpm_init(&argc,&argv);
 
+	openfpm::vector<double> trem;
+
+	for (int i = 0; i < 105; i++)
+	{
+
 #if !defined(CUDA_ON_CPU) && !defined(__HIP__)
 	cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 #endif
@@ -377,8 +382,26 @@ int main(int argc, char* argv[])
 
 	/////////////////////////////
 
+	timer tr;
+	tr.start();
+
+	auto ite = vd.getDomainIteratorGPU();
+	CUDA_LAUNCH(mark,ite,vd.toKernel());
+
 	// remove the particles marked
         remove_marked<red>(vd);
+
+	tr.stop();
+	std::cout << "REMOVE: " << tr.getwct() << std::endl;
+	trem.add(tr.getwct());
+
+	}
+
+	double tremo_mean;
+	double tremo_dev;
+	standard_deviation(trem,tremo_mean,tremo_dev);
+
+	std::cout << tremo_mean << " " << tremo_dev << std::endl;
 
 	openfpm_finalize();
 }
