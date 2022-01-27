@@ -406,6 +406,8 @@ int main(int argc, char* argv[])
 
 	}
 
+	auto & v_cl = create_vcluster();
+
 	double rem_mean;
 	double rem_dev;
 	standard_deviation(tr,rem_mean,rem_dev);
