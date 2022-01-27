@@ -384,6 +384,8 @@ int main(int argc, char* argv[])
 
 	// remove the particles marked
 
+	auto & v_cl = create_vcluster();
+
 	timer tm;
 
 	tm.start();
@@ -398,7 +400,9 @@ int main(int argc, char* argv[])
         vd.remove(rm);
 
 	tm.stop();
-	std::cout << "REMOVE: " << tm.getwct() << std::endl;
+
+	if (v_cl.rank() == 0)
+	{std::cout << "REMOVE: " << tm.getwct() << std::endl;}
 
 	}
 
@@ -406,7 +410,12 @@ int main(int argc, char* argv[])
 	double rem_dev;
 	standard_deviation(tr,rem_mean,rem_dev);
 
-	std::cout << "REM: " << rem_mean << std::endl; 
+	// mean across processors
+	v_cl.max(rem_mean);
+	v_cl.execute();
+
+	if (v_cl.rank() == 0)
+	{std::cout << "REM: " << rem_mean << std::endl;}
 
 	openfpm_finalize();
 }
