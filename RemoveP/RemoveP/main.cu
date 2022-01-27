@@ -404,20 +404,26 @@ int main(int argc, char* argv[])
 	if (v_cl.rank() == 0)
 	{std::cout << "REMOVE: " << tm.getwct() << std::endl;}
 
+	tr.add(tm.getwct());
+
 	}
 
 	auto & v_cl = create_vcluster();
 
 	double rem_mean;
+	double rem_sum;
 	double rem_dev;
 	standard_deviation(tr,rem_mean,rem_dev);
 
+	rem_sum = rem_mean;
+
 	// mean across processors
 	v_cl.max(rem_mean);
+	v_cl.sum(rem_sum);
 	v_cl.execute();
 
 	if (v_cl.rank() == 0)
-	{std::cout << "REM: " << rem_mean << std::endl;}
+	{std::cout << "REM: MAX: " << rem_mean << "  REM sum: " << rem_sum / v_cl.size()  << std::endl;}
 
 	openfpm_finalize();
 }
