@@ -609,7 +609,7 @@ int main(int argc, char* argv[])
 	openfpm::vector<double> tele_no_sync;
 	openfpm::vector<double> tele_tls;
 
-	for (int i = 0; i < 105; i++)
+	for (int i = 0; i < 10; i++)
 	{
 
 	    CudaMemory mem;
