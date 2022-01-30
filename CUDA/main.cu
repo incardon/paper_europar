@@ -1029,7 +1029,7 @@ int main(int argc, char* argv[])
 	std::cout << tele_lamb_mean << " " << tele_ker_mean << " " << tele_ns_ker_mean << "  "  << tele_tls_mean << std::endl;
 
 	std::cout << "SYNCTHREAD LATENCY: " << (tele_ker_mean - tele_ns_ker_mean) / (256*256*256*8) * 1e9 << " ns " << " error: " << tele_ker_dev + tele_ns_ker_dev << std::endl;
-	std::cout << "ATOMIC ADD: " << (tele_ns_ker_mean - tele_tls_mean) * 1e9 / (256*256*256*240) << " ns " << " error: " << tele_ns_ker_dev + tele_tls_dev << std::endl;
+	std::cout << "ATOMIC ADD: " << (tele_ns_ker_mean - tele_tls_mean) * 1e9 / (256.0*256.0*256.0*240.0) << " ns " << " error: " << tele_ns_ker_dev + tele_tls_dev << std::endl;
 	std::cout << "TLS: " << (tele_ker_mean - tele_lamb_mean) * 1e9 / (256*256*256*6) << "ns " << " error: " << tele_lamb_dev + tele_ker_dev << std::endl;
 
 	openfpm_finalize();
