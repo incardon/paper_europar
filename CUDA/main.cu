@@ -47,15 +47,46 @@ __global__ void test1_syncthreads(T p, float * array)
     size_t idx_z = blockIdx.z * blockDim.z + threadIdx.z;
 
 
-    atomicAdd(&cnt,1);
 
     __syncthreads();
-
-//    array[idx_z*gridDim.x*gridDim.y*blockDim.x*blockDim.y + idx_y*gridDim.x*blockDim.x + idx_x] = cnt;
-
     __syncthreads();
 
     atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
 
     __syncthreads();
 
@@ -74,10 +105,43 @@ __global__ void test1_no_syncthreads(T p, float * array)
     size_t idx_z = blockIdx.z * blockDim.z + threadIdx.z;
 
 
-    atomicAdd(&cnt,1);
 
 //    array[/*idx_z*gridDim.x*gridDim.y*blockDim.x*blockDim.y + idx_y*gridDim.x*blockDim.x + idx_x*/0] = idx_x + idx_y + idx_z/*64*/;
 
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
+    atomicAdd(&cnt,1);
     atomicAdd(&cnt,1);
 
 //    p.ptr[idx_z*gridDim.x*gridDim.y*blockDim.x*blockDim.y + idx_y*gridDim.x*blockDim.x + idx_x] = cnt + idx_x + idx_y + idx_z;
@@ -172,7 +236,6 @@ int main(int argc, char* argv[])
     
 //        	p.ptr[idx_z*gridDim.x*gridDim.y*blockDim.x*blockDim.y + idx_y*gridDim.x*blockDim.x + idx_x] = 17.0;
     
-        	atomicAdd(&cnt,1);
     
         	__syncthreads();
     
@@ -180,8 +243,42 @@ int main(int argc, char* argv[])
     
         	__syncthreads();
     
-        	atomicAdd(&cnt,1);
-    
+		atomicAdd(&cnt,1);
+		atomicAdd(&cnt,1);
+		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+    		atomicAdd(&cnt,1);
+
         	__syncthreads();
     
         	array[/*idx_z*gridDim.x*gridDim.y*blockDim.x*blockDim.y + idx_y*gridDim.x*blockDim.x + idx_x*/0] = cnt + idx_x + idx_y + idx_z;
@@ -320,7 +417,7 @@ int main(int argc, char* argv[])
 	std::cout << tele_lamb_mean << " " << tele_ker_mean << " " << tele_ns_ker_mean << "  "  << tele_tls_mean << std::endl;
 
 	std::cout << "SYNCTHREAD LATENCY: " << (tele_ker_mean - tele_ns_ker_mean) / (256*256*256*4) * 1e9 << " ns " << " error: " << tele_ker_dev + tele_ns_ker_dev << std::endl;
-	std::cout << "ATOMIC ADD: " << (tele_ns_ker_mean - tele_tls_mean) * 1e9 / (256*256*256*2) << " ns " << " error: " << tele_ns_ker_dev + tele_tls_dev << std::endl;
+	std::cout << "ATOMIC ADD: " << (tele_ns_ker_mean - tele_tls_mean) * 1e9 / (256*256*256*30) << " ns " << " error: " << tele_ns_ker_dev + tele_tls_dev << std::endl;
 	std::cout << "TLS: " << (tele_ker_mean - tele_lamb_mean) * 1e9 / (256*256*256*6) << "ns " << " error: " << tele_lamb_dev + tele_ker_dev << std::endl;
 
 	openfpm_finalize();
