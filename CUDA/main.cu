@@ -40,11 +40,9 @@ __global__ void test1_syncthreads(T p, float * array)
 
     cnt = 0;
 
-    size_t idx_x = blockIdx.x * blockDim.x + threadIdx.x;
-    size_t idx_y = blockIdx.y * blockDim.y + threadIdx.y;
-    size_t idx_z = blockIdx.z * blockDim.z + threadIdx.z;
-
-
+    size_t idx_x = blockIdx.x + threadIdx.x;
+    size_t idx_y = blockIdx.y + threadIdx.y;
+    size_t idx_z = blockIdx.z + threadIdx.z;
 
     __syncthreads();
     __syncthreads();
@@ -307,11 +305,9 @@ __global__ void test1_no_syncthreads(T p, float * array)
 
     cnt = 0;
 
-    size_t idx_x = blockIdx.x * blockDim.x + threadIdx.x;
-    size_t idx_y = blockIdx.y * blockDim.y + threadIdx.y;
-    size_t idx_z = blockIdx.z * blockDim.z + threadIdx.z;
-
-
+    size_t idx_x = blockIdx.x + threadIdx.x;
+    size_t idx_y = blockIdx.y + threadIdx.y;
+    size_t idx_z = blockIdx.z + threadIdx.z;
 
 //    array[/*idx_z*gridDim.x*gridDim.y*blockDim.x*blockDim.y + idx_y*gridDim.x*blockDim.x + idx_x*/0] = idx_x + idx_y + idx_z/*64*/;
 
@@ -638,9 +634,9 @@ int main(int argc, char* argv[])
 
         	cnt = 0;
     
-        	size_t idx_x = blockIdx.x * blockDim.x + threadIdx.x;
-        	size_t idx_y = blockIdx.y * blockDim.y + threadIdx.y;
-        	size_t idx_z = blockIdx.z * blockDim.z + threadIdx.z;
+        	size_t idx_x = blockIdx.x + threadIdx.x;
+        	size_t idx_y = blockIdx.y + threadIdx.y;
+        	size_t idx_z = blockIdx.z + threadIdx.z;
     
     
         	__syncthreads();
