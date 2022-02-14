@@ -15,7 +15,7 @@ endif()
 # Look for an installed Kokkos
 find_package(Kokkos REQUIRED)
 
-add_executable(membound membound.cpp)
+add_executable(membound membound.cu)
 
 # This is the only thing required to set up compiler/linker flags
 target_link_libraries(membound Kokkos::kokkos)
