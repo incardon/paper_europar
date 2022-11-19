@@ -130,35 +130,76 @@ void struct_of_arrays_cuda (vd_out_prp0_type vd_out_prp0, vd_out_prp1_type vd_ou
 }
 #endif
 
-template<typename prp_type, typename pos_type>
-void array_of_structs (prp_type prp, pos_type pos, int N) {
+template<typename vd_out_prp0_type, typename vd_out_prp1_type, typename vd_out_prp2_type, typename vd_in_type>
+void arrays (vd_out_prp0_type vd_out_prp0, vd_out_prp1_type vd_out_prp1, vd_out_prp2_type vd_out_prp2, vd_in_type vd_in, int N) {
+
+   float * out_s = (float *)&vd_out_prp0(0);
+   float * out_v = (float *)&vd_out_prp1(0,0);
+   float * out_m = (float *)&vd_out_prp2(0,0,0);
+   float * in_v = (float *)&vd_in(0,0);
+
+   int stride = N;
+
+   for (int i = 0 ; i < 110 ; i++)
+   {
+
 
         Kokkos::fence();
         Kokkos::Timer timer;
 
         Kokkos::parallel_for(
-        N, KOKKOS_LAMBDA(const int i) {
-          auto pos_i_0 = pos(i, 0);
-          auto pos_i_1 = pos(i, 1);
-          prp(i).s = pos_i_0 + pos_i_1;
+        N, KOKKOS_LAMBDA(const int p) {
 
-          prp(i).v[0] = pos_i_0;
-          prp(i).v[1] = pos_i_1;
+            float a = out_s[p];
 
+            float b = out_v[p + 0*stride];
+            float c = out_v[p + 1*stride];
 
-          prp(i).t[0][0] = pos_i_0;
-          prp(i).t[0][1] = pos_i_1;
-          prp(i).t[1][0] = pos_i_0 + pos_i_1;
-          prp(i).t[1][1] = pos_i_1 - pos_i_0;
+            float d = out_m[p + 0*2*stride + 0*stride];
+            float e = out_m[p + 0*2*stride + 1*stride];
+            float f = out_m[p + 1*2*stride + 0*stride];
+            float g = out_m[p + 1*2*stride + 1*stride];
 
-          pos(i, 0) = pos_i_0 + 0.01;
-          pos(i, 1) = pos_i_1 + 0.01;
+            float h = in_v[p + 0*stride];
+            in_v[p + 1*stride] = a+b+c+d+e+f+g+h;
 
         });
 
         Kokkos::fence();
         double time = timer.seconds();
-        std::cout << "TIME: " << time << "  " << (double)N*8*11 / time * 1e-9 << " GB/s"  << std::endl;
+        std::cout << "TIME: READ " << time << "  " << (double)N*4*9 / time * 1e-9 << " GB/s"  << std::endl;
+    }
+
+   for (int i = 0 ; i < 110 ; i++)
+   {
+
+
+        Kokkos::fence();
+        Kokkos::Timer timer;
+
+        Kokkos::parallel_for(
+        N, KOKKOS_LAMBDA(const int p) {
+
+
+            float a = in_v[p + 0*stride];
+
+            out_s[p] = a;
+
+            out_v[p + 0*stride] = a;
+            out_v[p + 1*stride] = a;
+
+            out_m[p + 0*2*stride + 0*stride ] = a;
+            out_m[p + 0*2*stride + 1*stride ] = a;
+            out_m[p + 1*2*stride + 0*stride ] = a;
+            out_m[p + 1*2*stride + 1*stride ] = a;
+            in_v[p + 1*stride] = a;
+
+        });
+
+        Kokkos::fence();
+        double time = timer.seconds();
+        std::cout << "TIME: WRITE" << time << "  " << (double)N*4*9 / time * 1e-9 << " GB/s"  << std::endl;
+   }
 }
 
 int main(int argc, char* argv[]) {
@@ -169,10 +210,10 @@ int main(int argc, char* argv[]) {
   {
 
     int N = NELEMENTS;
-    Kokkos::View<float*[2]> pos ("position", N);
-    Kokkos::View<float*> prp_s ("scalar_property", N);
-    Kokkos::View<float*[2]> prp_v ("vector_property", N);
-    Kokkos::View<float*[2][2]> prp_t ("tensor_property", N);
+    Kokkos::View<float*[2],Kokkos::LayoutLeft> pos ("position", N);
+    Kokkos::View<float*,Kokkos::LayoutLeft> prp_s ("scalar_property", N);
+    Kokkos::View<float*[2],Kokkos::LayoutLeft> prp_v ("vector_property", N);
+    Kokkos::View<float*[2][2],Kokkos::LayoutLeft> prp_t ("tensor_property", N);
 
     Kokkos::View<ele*> prp ("aos_prp", N);
 
@@ -189,7 +230,7 @@ int main(int argc, char* argv[]) {
 
     struct_of_arrays_write(prp_s, prp_v, prp_t, pos, N, times_read);
     struct_of_arrays_read(prp_s, prp_v, prp_t, pos, N, times_write);
-//    array_of_structs(prp, pos, N);
+    arrays(prp_s, prp_v, prp_t, pos, N);
 
     double mean_read;
     double mean_write;
