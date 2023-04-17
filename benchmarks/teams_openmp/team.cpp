@@ -4,9 +4,9 @@
 #include <omp.h>
  
 int main(){
-  int sz = 32;
-  int team_sz = 4;
-  int nteams_required=sz*sz/team_sz, tm_id, th_id;
+  int sz = 512;
+  int team_sz = 64;
+  int nteams_required=sz*sz*64/team_sz, tm_id, th_id;
 
   double start; 
   double end; 
@@ -55,8 +55,8 @@ int main(){
     }
   }
 
-  end = omp_get_wtime(); 
-
-  printf("TIME: %f ns\n", (end - start) / (sz*sz*team_sz*24) * 1e9);
+  end = omp_get_wtime();
+  
+  printf("TIME: %f ns\n", (end - start) / (sz*sz*64*24) * 1e9);
   return 0;
 } 
